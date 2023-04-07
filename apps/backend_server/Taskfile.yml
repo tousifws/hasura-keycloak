@@ -1,0 +1,28 @@
+version: '3'
+
+env:
+    ENV: development
+
+dotenv: ['.env.{{.ENV}}.local']
+
+tasks:
+    startUp:
+        deps: [migrateUp]
+        cmds:
+            - pnpm hasura metadata apply
+
+    hasura:
+        cmds:
+            - hasura --project ../hasura --skip-update-check {{.CLI_ARGS}}
+
+    migrateUp:
+        cmds:
+            - dbmate up
+
+    migrateDown:
+        cmds:
+            - dbmate down
+
+    prismaPull:
+        cmds:
+            - pnpm prisma db pull

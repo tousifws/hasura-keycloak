@@ -1,0 +1,30 @@
+# https://taskfile.dev
+
+version: '3'
+
+env:
+    ENV: local
+
+dotenv: ['.env', '.env.{{.ENV}}']
+
+vars:
+    GREETING: Hello, World!
+
+tasks:
+    startUp:
+        cmds:
+            - chmod +x ./bootstrap.sh
+            - ./bootstrap.sh
+
+    composeUp:
+        cmds:
+            - docker-compose --env-file ./.env.development.local up
+
+    composeDown:
+        cmds:
+            - docker-compose --env-file ./.env.development.local down --remove-orphans
+
+    dockerVolume:
+        cmds:
+            - echo "Removing Docker volumes"
+            - docker volume rm $(docker volume ls -q)

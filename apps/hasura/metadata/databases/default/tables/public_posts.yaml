@@ -1,0 +1,37 @@
+table:
+  name: posts
+  schema: public
+insert_permissions:
+  - role: user
+    permission:
+      check:
+        author:
+          _eq: X-Hasura-User-Id
+      set:
+        author: x-hasura-User-Id
+      columns:
+        - content
+        - published
+        - title
+select_permissions:
+  - role: user
+    permission:
+      columns: []
+      filter: {}
+update_permissions:
+  - role: user
+    permission:
+      columns:
+        - content
+        - published
+        - title
+      filter:
+        author:
+          _eq: X-Hasura-User-Id
+      check: null
+delete_permissions:
+  - role: user
+    permission:
+      filter:
+        author:
+          _eq: X-Hasura-User-Id

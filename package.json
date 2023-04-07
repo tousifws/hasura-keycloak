@@ -1,25 +1,29 @@
 {
-  "name": "hasura-keycloak",
-  "version": "0.0.0",
-  "private": true,
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
-  "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev",
-    "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
-  },
-  "devDependencies": {
-    "eslint-config-custom": "workspace:*",
-    "prettier": "latest",
-    "turbo": "latest"
-  },
-  "engines": {
-    "node": ">=14.0.0"
-  },
-  "dependencies": {},
-  "packageManager": "pnpm@7.12.2"
+    "name": "hasura-keycloak",
+    "version": "0.0.0",
+    "private": true,
+    "workspaces": [
+        "apps/*",
+        "packages/*"
+    ],
+    "scripts": {
+        "build": "turbo run build",
+        "dev": "turbo run dev",
+        "lint": "turbo run lint",
+        "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+        "hasura": "hasura --project ./apps/hasura --skip-update-check",
+        "hasura:console": "npm run hasura console",
+        "hasura:apply": "npm run hasura migrate apply"
+    },
+    "devDependencies": {
+        "dotenv-cli": "^7.2.1",
+        "eslint-config-custom": "workspace:*",
+        "hasura-cli": "^2.17.1",
+        "prettier": "latest",
+        "turbo": "latest"
+    },
+    "engines": {
+        "node": ">=14.0.0"
+    },
+    "packageManager": "pnpm@7.12.2"
 }
