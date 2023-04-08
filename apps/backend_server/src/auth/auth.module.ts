@@ -7,6 +7,7 @@ import { config } from '../config/index';
 import { SdkModule } from '../sdk/sdk.module';
 import { AuthController } from './auth.controller';
 import { AuthService, buildOpenIdClient } from './auth.service';
+import { AuthResolver } from './auth.resolver';
 
 const OidcFactory = {
     provide: 'OIDC',
@@ -39,7 +40,7 @@ const client = new JwksClient({
         }),
     ],
     controllers: [AuthController],
-    providers: [OidcFactory, AuthService],
+    providers: [OidcFactory, AuthService, AuthResolver],
     exports: [JwtModule],
 })
 export class AuthModule {}
