@@ -28,6 +28,13 @@ gql`
             name
         }
     }
+
+    query findUserById($id: uuid!) {
+        users_by_pk(id: $id) {
+            id
+            name
+        }
+    }
 `;
 
 export interface LoginUserArgs {
@@ -99,6 +106,7 @@ export class AuthService {
 
     async callback(request: IncomingMessage, checks: OpenIDCallbackChecks) {
         const params = this.openIdClient.callbackParams(request);
+        this.logger.log(params);
         return await this.openIdClient.callback(
             config.OPENID_CLIENT_REGISTRATION_LOGIN_REDIRECT_URI,
             params,
@@ -115,12 +123,22 @@ export class AuthService {
     }
 
     /**
-     * Create or update a user
+     * Create a user
      */
     public async createOrUpdateUser(input: CreateUserDto) {
-        const { insert_users_one: user } = await this.sdk.createUser({
-            input,
-        });
+        const { id } = input;
+        let user;
+        if (id) {
+            user = await this.sdk.findUserById({ id });
+        }
+
+        if (!user) {
+            const { insert_users_one: newUser } = await this.sdk.createUser({
+                input,
+            });
+            user = newUser;
+        }
+        this.logger.log(user);
 
         return user;
     }
@@ -128,7 +146,7 @@ export class AuthService {
     // /**
     //  * findUser
     //  */
-    // public findUser(id: string) {
-    //   return this.prisma.users.findFirst({ where: { id } });
-    // }
+    public findUser(id: string) {
+        return this.sdk.findUserById({ id });
+    }
 }

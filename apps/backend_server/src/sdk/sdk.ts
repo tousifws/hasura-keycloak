@@ -804,6 +804,13 @@ export type FindUserByEmailQueryVariables = Exact<{
 
 export type FindUserByEmailQuery = { __typename?: 'query_root', users: Array<{ __typename?: 'users', id: string, name: string }> };
 
+export type FindUserByIdQueryVariables = Exact<{
+  id: Scalars['uuid'];
+}>;
+
+
+export type FindUserByIdQuery = { __typename?: 'query_root', users_by_pk: { __typename?: 'users', id: string, name: string } | null };
+
 
 export const CreateUserDocument = gql`
     mutation createUser($input: users_insert_input!) {
@@ -822,6 +829,14 @@ export const FindUserByEmailDocument = gql`
   }
 }
     `;
+export const FindUserByIdDocument = gql`
+    query findUserById($id: uuid!) {
+  users_by_pk(id: $id) {
+    id
+    name
+  }
+}
+    `;
 
 export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string, operationType?: string) => Promise<T>;
 
@@ -835,6 +850,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     findUserByEmail(variables: FindUserByEmailQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<FindUserByEmailQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<FindUserByEmailQuery>(FindUserByEmailDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'findUserByEmail', 'query');
+    },
+    findUserById(variables: FindUserByIdQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<FindUserByIdQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<FindUserByIdQuery>(FindUserByIdDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'findUserById', 'query');
     }
   };
 }
