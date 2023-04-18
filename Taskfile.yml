@@ -11,11 +11,6 @@ vars:
     GREETING: Hello, World!
 
 tasks:
-    startUp:
-        cmds:
-            - chmod +x ./bootstrap.sh
-            - ./bootstrap.sh
-
     composeUp:
         cmds:
             - docker-compose --env-file ./.env.development.local up

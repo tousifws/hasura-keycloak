@@ -10,6 +10,7 @@ tasks:
         deps: [migrateUp]
         cmds:
             - pnpm hasura metadata apply
+            - pnpm dev
 
     hasura:
         cmds:
@@ -22,7 +23,3 @@ tasks:
     migrateDown:
         cmds:
             - dbmate down
-
-    prismaPull:
-        cmds:
-            - pnpm prisma db pull
