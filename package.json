@@ -16,6 +16,7 @@
         "hasura:apply": "npm run hasura migrate apply"
     },
     "devDependencies": {
+        "@faker-js/faker": "7.5.0",
         "dotenv-cli": "^7.2.1",
         "eslint-config-custom": "workspace:*",
         "hasura-cli": "^2.17.1",
