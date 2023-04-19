@@ -1,19 +1,19 @@
 # Hasura Keycloak
 
-## Prerequisite:
+-   Prerequisite:
 
-    - Docker
-    - NodeJS v14 or later
-    - Pnpm
-    - [Dbmate](https://github.com/amacneil/dbmate) (used for handling migrations)
-    - [Task](https://taskfile.dev/)
+    -   Docker
+    -   NodeJS v14 or later
+    -   Pnpm
+    -   [Dbmate](https://github.com/amacneil/dbmate) (used for handling migrations)
+    -   [Task](https://taskfile.dev/)
 
-## Installation
+-   Installation
 
     1. pnpm install
     2. task composeUp - Will start the containers defined in docker-compose file
 
-## Startup the server
+-   Startup the server
 
     1. cd apps/backend_server
     2. task startUp
