@@ -1,12 +1,14 @@
 table:
   name: posts
   schema: public
+object_relationships:
+  - name: user
+    using:
+      foreign_key_constraint_on: author
 insert_permissions:
   - role: user
     permission:
-      check:
-        author:
-          _eq: X-Hasura-User-Id
+      check: {}
       set:
         author: x-hasura-User-Id
       columns:
@@ -14,9 +16,26 @@ insert_permissions:
         - published
         - title
 select_permissions:
+  - role: anonymous
+    permission:
+      columns:
+        - author
+        - content
+        - created_at
+        - id
+        - title
+        - updated_at
+      filter: {}
   - role: user
     permission:
-      columns: []
+      columns:
+        - published
+        - title
+        - content
+        - created_at
+        - updated_at
+        - author
+        - id
       filter: {}
 update_permissions:
   - role: user

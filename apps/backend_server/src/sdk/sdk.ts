@@ -31,6 +31,19 @@ export type Boolean_Comparison_Exp = {
   _nin?: InputMaybe<Array<Scalars['Boolean']>>;
 };
 
+/** Boolean expression to compare columns of type "Int". All fields are combined with logical 'AND'. */
+export type Int_Comparison_Exp = {
+  _eq?: InputMaybe<Scalars['Int']>;
+  _gt?: InputMaybe<Scalars['Int']>;
+  _gte?: InputMaybe<Scalars['Int']>;
+  _in?: InputMaybe<Array<Scalars['Int']>>;
+  _is_null?: InputMaybe<Scalars['Boolean']>;
+  _lt?: InputMaybe<Scalars['Int']>;
+  _lte?: InputMaybe<Scalars['Int']>;
+  _neq?: InputMaybe<Scalars['Int']>;
+  _nin?: InputMaybe<Array<Scalars['Int']>>;
+};
+
 /** Boolean expression to compare columns of type "String". All fields are combined with logical 'AND'. */
 export type String_Comparison_Exp = {
   _eq?: InputMaybe<Scalars['String']>;
@@ -256,6 +269,8 @@ export type Posts = {
   published: Maybe<Scalars['Boolean']>;
   title: Scalars['String'];
   updated_at: Maybe<Scalars['timestamptz']>;
+  /** An object relationship */
+  user: Users;
 };
 
 /** aggregated selection of "posts" */
@@ -263,6 +278,33 @@ export type Posts_Aggregate = {
   __typename?: 'posts_aggregate';
   aggregate: Maybe<Posts_Aggregate_Fields>;
   nodes: Array<Posts>;
+};
+
+export type Posts_Aggregate_Bool_Exp = {
+  bool_and?: InputMaybe<Posts_Aggregate_Bool_Exp_Bool_And>;
+  bool_or?: InputMaybe<Posts_Aggregate_Bool_Exp_Bool_Or>;
+  count?: InputMaybe<Posts_Aggregate_Bool_Exp_Count>;
+};
+
+export type Posts_Aggregate_Bool_Exp_Bool_And = {
+  arguments: Posts_Select_Column_Posts_Aggregate_Bool_Exp_Bool_And_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Posts_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Posts_Aggregate_Bool_Exp_Bool_Or = {
+  arguments: Posts_Select_Column_Posts_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Posts_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Posts_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Posts_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Posts_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "posts" */
@@ -280,6 +322,20 @@ export type Posts_Aggregate_FieldsCountArgs = {
   distinct: InputMaybe<Scalars['Boolean']>;
 };
 
+/** order by aggregate values of table "posts" */
+export type Posts_Aggregate_Order_By = {
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Posts_Max_Order_By>;
+  min?: InputMaybe<Posts_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "posts" */
+export type Posts_Arr_Rel_Insert_Input = {
+  data: Array<Posts_Insert_Input>;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Posts_On_Conflict>;
+};
+
 /** Boolean expression to filter rows from the table "posts". All fields are combined with a logical 'AND'. */
 export type Posts_Bool_Exp = {
   _and?: InputMaybe<Array<Posts_Bool_Exp>>;
@@ -292,6 +348,7 @@ export type Posts_Bool_Exp = {
   published?: InputMaybe<Boolean_Comparison_Exp>;
   title?: InputMaybe<String_Comparison_Exp>;
   updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  user?: InputMaybe<Users_Bool_Exp>;
 };
 
 /** unique or primary key constraints on table "posts" */
@@ -309,6 +366,7 @@ export type Posts_Insert_Input = {
   published?: InputMaybe<Scalars['Boolean']>;
   title?: InputMaybe<Scalars['String']>;
   updated_at?: InputMaybe<Scalars['timestamptz']>;
+  user?: InputMaybe<Users_Obj_Rel_Insert_Input>;
 };
 
 /** aggregate max on columns */
@@ -322,6 +380,16 @@ export type Posts_Max_Fields = {
   updated_at: Maybe<Scalars['timestamptz']>;
 };
 
+/** order by max() on columns of table "posts" */
+export type Posts_Max_Order_By = {
+  author?: InputMaybe<Order_By>;
+  content?: InputMaybe<Order_By>;
+  created_at?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  title?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
 /** aggregate min on columns */
 export type Posts_Min_Fields = {
   __typename?: 'posts_min_fields';
@@ -331,6 +399,16 @@ export type Posts_Min_Fields = {
   id: Maybe<Scalars['uuid']>;
   title: Maybe<Scalars['String']>;
   updated_at: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "posts" */
+export type Posts_Min_Order_By = {
+  author?: InputMaybe<Order_By>;
+  content?: InputMaybe<Order_By>;
+  created_at?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  title?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
 };
 
 /** response of any mutation on the table "posts" */
@@ -358,6 +436,7 @@ export type Posts_Order_By = {
   published?: InputMaybe<Order_By>;
   title?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
+  user?: InputMaybe<Users_Order_By>;
 };
 
 /** primary key columns input for table: posts */
@@ -381,6 +460,18 @@ export enum Posts_Select_Column {
   Title = 'title',
   /** column name */
   UpdatedAt = 'updated_at'
+}
+
+/** select "posts_aggregate_bool_exp_bool_and_arguments_columns" columns of table "posts" */
+export enum Posts_Select_Column_Posts_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
+  /** column name */
+  Published = 'published'
+}
+
+/** select "posts_aggregate_bool_exp_bool_or_arguments_columns" columns of table "posts" */
+export enum Posts_Select_Column_Posts_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
+  /** column name */
+  Published = 'published'
 }
 
 /** input type for updating data in table "posts" */
@@ -440,9 +531,9 @@ export type Posts_Updates = {
 
 export type Query_Root = {
   __typename?: 'query_root';
-  /** fetch data from the table: "posts" */
+  /** An array relationship */
   posts: Array<Posts>;
-  /** fetch aggregated fields from the table: "posts" */
+  /** An aggregate relationship */
   posts_aggregate: Posts_Aggregate;
   /** fetch data from the table: "posts" using primary key columns */
   posts_by_pk: Maybe<Posts>;
@@ -502,9 +593,9 @@ export type Query_RootUsers_By_PkArgs = {
 
 export type Subscription_Root = {
   __typename?: 'subscription_root';
-  /** fetch data from the table: "posts" */
+  /** An array relationship */
   posts: Array<Posts>;
-  /** fetch aggregated fields from the table: "posts" */
+  /** An aggregate relationship */
   posts_aggregate: Posts_Aggregate;
   /** fetch data from the table: "posts" using primary key columns */
   posts_by_pk: Maybe<Posts>;
@@ -601,7 +692,31 @@ export type Users = {
   id: Scalars['uuid'];
   name: Scalars['String'];
   phone: Maybe<Scalars['String']>;
+  /** An array relationship */
+  posts: Array<Posts>;
+  /** An aggregate relationship */
+  posts_aggregate: Posts_Aggregate;
   updated_at: Maybe<Scalars['timestamptz']>;
+};
+
+
+/** columns and relationships of "users" */
+export type UsersPostsArgs = {
+  distinct_on: InputMaybe<Array<Posts_Select_Column>>;
+  limit: InputMaybe<Scalars['Int']>;
+  offset: InputMaybe<Scalars['Int']>;
+  order_by: InputMaybe<Array<Posts_Order_By>>;
+  where: InputMaybe<Posts_Bool_Exp>;
+};
+
+
+/** columns and relationships of "users" */
+export type UsersPosts_AggregateArgs = {
+  distinct_on: InputMaybe<Array<Posts_Select_Column>>;
+  limit: InputMaybe<Scalars['Int']>;
+  offset: InputMaybe<Scalars['Int']>;
+  order_by: InputMaybe<Array<Posts_Order_By>>;
+  where: InputMaybe<Posts_Bool_Exp>;
 };
 
 /** aggregated selection of "users" */
@@ -636,6 +751,8 @@ export type Users_Bool_Exp = {
   id?: InputMaybe<Uuid_Comparison_Exp>;
   name?: InputMaybe<String_Comparison_Exp>;
   phone?: InputMaybe<String_Comparison_Exp>;
+  posts?: InputMaybe<Posts_Bool_Exp>;
+  posts_aggregate?: InputMaybe<Posts_Aggregate_Bool_Exp>;
   updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
 };
 
@@ -654,6 +771,7 @@ export type Users_Insert_Input = {
   id?: InputMaybe<Scalars['uuid']>;
   name?: InputMaybe<Scalars['String']>;
   phone?: InputMaybe<Scalars['String']>;
+  posts?: InputMaybe<Posts_Arr_Rel_Insert_Input>;
   updated_at?: InputMaybe<Scalars['timestamptz']>;
 };
 
@@ -688,6 +806,13 @@ export type Users_Mutation_Response = {
   returning: Array<Users>;
 };
 
+/** input type for inserting object relation for remote table "users" */
+export type Users_Obj_Rel_Insert_Input = {
+  data: Users_Insert_Input;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Users_On_Conflict>;
+};
+
 /** on_conflict condition type for table "users" */
 export type Users_On_Conflict = {
   constraint: Users_Constraint;
@@ -702,6 +827,7 @@ export type Users_Order_By = {
   id?: InputMaybe<Order_By>;
   name?: InputMaybe<Order_By>;
   phone?: InputMaybe<Order_By>;
+  posts_aggregate?: InputMaybe<Posts_Aggregate_Order_By>;
   updated_at?: InputMaybe<Order_By>;
 };
 

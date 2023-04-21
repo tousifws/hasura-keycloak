@@ -151,13 +151,16 @@ export class AuthService {
                     name,
                 },
             });
-            console.log(insert_users_one);
+            this.logger.log(insert_users_one);
         } catch (error) {
-            console.log(error);
-            this.sdk.updateUserById({
-                id: input.id,
-                input: { ...input, name },
-            });
+            if (error.message.includes('Uniqueness violation')) {
+                this.sdk.updateUserById({
+                    id: input.id,
+                    input: { ...input, name },
+                });
+            } else {
+                this.logger.error(error);
+            }
         }
 
         return;

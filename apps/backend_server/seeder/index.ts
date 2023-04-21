@@ -34,6 +34,7 @@ async function main() {
         .values(
             userIds.map(({ id }) => ({
                 author: id,
+                published: faker.datatype.boolean(),
                 title: faker.random.words(5),
                 content: faker.random.words(15),
             }))
