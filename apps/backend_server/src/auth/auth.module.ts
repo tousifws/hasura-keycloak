@@ -31,7 +31,7 @@ const client = new JwksClient({
                 const keys = await client.getSigningKeys();
 
                 return {
-                    secret: keys[0].getPublicKey(),
+                    publicKey: keys[0].getPublicKey(),
                     verifyOptions: {
                         algorithms: ['RS256'],
                     },

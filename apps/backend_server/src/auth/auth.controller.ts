@@ -31,13 +31,18 @@ export class AuthController {
     }
 
     @Get('/logout')
-    async logout(@Request() req: FastifyRequestType, @Response() res: FastifyReply) {
+    async logout(
+        @Request() req: FastifyRequestType,
+        @Response({ passthrough: true }) res: FastifyReply
+    ) {
         try {
             const id_token = req.user ? req.user.id_token : undefined;
 
             req.session.delete();
-            res.clearCookie('access_token');
-            res.clearCookie('id_token');
+
+            res.clearCookie('id_token', { path: '/auth' });
+            res.clearCookie('access_token', { path: '/auth' });
+            res.clearCookie('refresh_token', { path: '/auth' });
 
             const TrustIssuer = await Issuer.discover(
                 `${config.OPENID_CLIENT_PROVIDER_OIDC_ISSUER}/.well-known/openid-configuration`
