@@ -9,7 +9,6 @@ module.exports = {
             url: endpoint,
             headers: {
                 'x-hasura-admin-secret': secret,
-                'x-hasura-use-backend-only-permissions': true,
             },
         },
         includes: ['src/**/*.service.ts'],

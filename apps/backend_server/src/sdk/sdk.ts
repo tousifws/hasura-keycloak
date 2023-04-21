@@ -795,21 +795,29 @@ export type CreateUserMutationVariables = Exact<{
 }>;
 
 
-export type CreateUserMutation = { __typename?: 'mutation_root', insert_users_one: { __typename?: 'users', id: string, email: string, name: string } | null };
+export type CreateUserMutation = { __typename?: 'mutation_root', insert_users_one: { __typename?: 'users', id: string, email: string, name: string, phone: string | null, created_at: string } | null };
+
+export type UpdateUserByIdMutationVariables = Exact<{
+  id: Scalars['uuid'];
+  input: Users_Set_Input;
+}>;
+
+
+export type UpdateUserByIdMutation = { __typename?: 'mutation_root', update_users_by_pk: { __typename?: 'users', email: string, id: string, name: string, phone: string | null } | null };
 
 export type FindUserByEmailQueryVariables = Exact<{
   email: Scalars['citext'];
 }>;
 
 
-export type FindUserByEmailQuery = { __typename?: 'query_root', users: Array<{ __typename?: 'users', id: string, name: string }> };
+export type FindUserByEmailQuery = { __typename?: 'query_root', users: Array<{ __typename?: 'users', id: string, name: string, phone: string | null, created_at: string }> };
 
 export type FindUserByIdQueryVariables = Exact<{
   id: Scalars['uuid'];
 }>;
 
 
-export type FindUserByIdQuery = { __typename?: 'query_root', users_by_pk: { __typename?: 'users', id: string, name: string } | null };
+export type FindUserByIdQuery = { __typename?: 'query_root', users_by_pk: { __typename?: 'users', id: string, name: string, email: string, phone: string | null, created_at: string } | null };
 
 
 export const CreateUserDocument = gql`
@@ -818,6 +826,18 @@ export const CreateUserDocument = gql`
     id
     email
     name
+    phone
+    created_at
+  }
+}
+    `;
+export const UpdateUserByIdDocument = gql`
+    mutation updateUserById($id: uuid!, $input: users_set_input!) {
+  update_users_by_pk(pk_columns: {id: $id}, _set: $input) {
+    email
+    id
+    name
+    phone
   }
 }
     `;
@@ -826,6 +846,8 @@ export const FindUserByEmailDocument = gql`
   users(where: {email: {_eq: $email}}) {
     id
     name
+    phone
+    created_at
   }
 }
     `;
@@ -834,6 +856,9 @@ export const FindUserByIdDocument = gql`
   users_by_pk(id: $id) {
     id
     name
+    email
+    phone
+    created_at
   }
 }
     `;
@@ -847,6 +872,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
   return {
     createUser(variables: CreateUserMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CreateUserMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<CreateUserMutation>(CreateUserDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createUser', 'mutation');
+    },
+    updateUserById(variables: UpdateUserByIdMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<UpdateUserByIdMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<UpdateUserByIdMutation>(UpdateUserByIdDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'updateUserById', 'mutation');
     },
     findUserByEmail(variables: FindUserByEmailQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<FindUserByEmailQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<FindUserByEmailQuery>(FindUserByEmailDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'findUserByEmail', 'query');

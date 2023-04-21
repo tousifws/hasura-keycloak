@@ -36,7 +36,7 @@ export class AuthController {
         @Response({ passthrough: true }) res: FastifyReply
     ) {
         try {
-            const id_token = req.user ? req.user.id_token : undefined;
+            const id_token = req.cookies['id_token'] ?? undefined;
 
             req.session.delete();
 
@@ -50,13 +50,15 @@ export class AuthController {
 
             const end_session_endpoint = TrustIssuer.metadata.end_session_endpoint;
 
-            if (end_session_endpoint) {
+            if (end_session_endpoint && id_token) {
                 const uri =
                     end_session_endpoint +
                     '?post_logout_redirect_uri=' +
                     config.OPENID_CLIENT_REGISTRATION_LOGIN_POST_LOGOUT_REDIRECT_URI +
-                    (id_token ? '&id_token_hint=' + id_token : '');
-
+                    '&id_token_hint=' +
+                    id_token;
+                return res.redirect(303, uri);
+            } else {
                 return res.redirect(303, end_session_endpoint);
             }
         } catch (error) {

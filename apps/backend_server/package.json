@@ -9,7 +9,7 @@
         "build": "nest build",
         "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
         "start": "nest start",
-        "dev": "dotenv -e .env.development.local -- nest start --watch",
+        "dev": "dotenv -e .env.development.local -- concurrently \"nest start --watch\" \"yarn generate --watch\"",
         "start:debug": "nest start --debug --watch",
         "start:prod": "node dist/main",
         "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
@@ -19,7 +19,7 @@
         "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
         "test:e2e": "jest --config ./test/jest-e2e.json",
         "hasura": "export NODE_OPTIONS=\"\" && hasura --project ../hasura --envfile ../backend_server/.env.development.local --skip-update-check",
-        "generate": "pnpm graphql-codegen",
+        "generate": "graphql-codegen",
         "kysely:gen": "dotenv -e .env.development.local -- kysely-codegen",
         "kysely:seed": "dotenv -e .env.development.local -- ts-node seeder/index.ts",
         "postinstall": "kysely:gen"

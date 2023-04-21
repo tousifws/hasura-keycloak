@@ -19,6 +19,17 @@ gql`
             id
             email
             name
+            phone
+            created_at
+        }
+    }
+
+    mutation updateUserById($id: uuid!, $input: users_set_input!) {
+        update_users_by_pk(pk_columns: { id: $id }, _set: $input) {
+            email
+            id
+            name
+            phone
         }
     }
 
@@ -26,6 +37,8 @@ gql`
         users(where: { email: { _eq: $email } }) {
             id
             name
+            phone
+            created_at
         }
     }
 
@@ -33,6 +46,9 @@ gql`
         users_by_pk(id: $id) {
             id
             name
+            email
+            phone
+            created_at
         }
     }
 `;
@@ -100,13 +116,13 @@ export class AuthService {
 
     async getUserInfo(accessToken: string): Promise<UserinfoResponse> {
         const userinfo: UserinfoResponse = await this.openIdClient.userinfo(accessToken);
-        this.logger.log(userinfo);
+        // this.logger.log(userinfo);
         return userinfo;
     }
 
     async callback(request: IncomingMessage, checks: OpenIDCallbackChecks) {
         const params = this.openIdClient.callbackParams(request);
-        this.logger.log(params);
+
         return await this.openIdClient.callback(
             config.OPENID_CLIENT_REGISTRATION_LOGIN_REDIRECT_URI,
             params,
@@ -122,25 +138,29 @@ export class AuthService {
         return this.openIdClient.refresh(refreshToekn);
     }
 
-    /**
-     * Create a user
-     */
     public async createOrUpdateUser(input: CreateUserDto) {
-        const { id } = input;
-        let user;
-        if (id) {
-            user = await this.sdk.findUserById({ id });
+        let name = input.name;
+        if (name?.length < 1) {
+            name = input.email.split('@')[0];
         }
-
-        if (!user) {
-            const { insert_users_one: newUser } = await this.sdk.createUser({
-                input,
+        try {
+            const { insert_users_one } = await this.sdk.createUser({
+                input: {
+                    id: input.id,
+                    email: input.email,
+                    name,
+                },
             });
-            user = newUser;
+            console.log(insert_users_one);
+        } catch (error) {
+            console.log(error);
+            this.sdk.updateUserById({
+                id: input.id,
+                input: { ...input, name },
+            });
         }
-        this.logger.log(user);
 
-        return user;
+        return;
     }
 
     // /**

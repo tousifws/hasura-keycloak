@@ -9,13 +9,13 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 import { JwtService } from '@nestjs/jwt';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import { IncomingMessage } from 'http';
-import { TokenSet, generators } from 'openid-client';
+import { TokenSet, UserinfoResponse, generators } from 'openid-client';
 
 import { config } from '../config/index';
 import { AuthService } from './auth.service';
 
 export type FastifyRequestType = FastifyRequest & {
-    user?: Record<string, unknown>;
+    user?: UserJWT | UserinfoResponse;
     accessToken?: string;
 };
 
@@ -30,18 +30,27 @@ export class JwtGuard implements CanActivate {
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request = this.getRequest<FastifyRequestType>(context);
+        const response: FastifyReply = context.switchToHttp().getResponse();
         const sessionKey = 'oidc';
         try {
-            const token = this.getToken(request);
+            let token = this.getToken(request);
 
-            const user = this.jwtService.verify(token);
-            this.logger.log(user);
+            const user = this.jwtService.verify<UserJWT>(token);
+            const refreshToken = request.cookies['refresh_token'];
+
+            if (Date.now() >= user.exp * 1000 && refreshToken) {
+                const result = await this.authService.refreshToken(refreshToken);
+                response.setCookie('access_token', `Bearer ${result.access_token}`);
+                response.setCookie('refresh_token', result.refresh_token);
+                response.setCookie('id_token', result.id_token);
+                token = result.access_token;
+            }
+
             request.user = user;
             request.accessToken = token;
             return true;
         } catch (e) {
             const session = request.session.get(sessionKey);
-            const response: FastifyReply = context.switchToHttp().getResponse();
 
             if (session?.state && session?.nonce) {
                 const { state, nonce } = session;
@@ -62,7 +71,7 @@ export class JwtGuard implements CanActivate {
                     response.setCookie('id_token', result.id_token);
                     const user = await this.authService.getUserInfo(result.access_token);
                     request.user = user;
-                    this.authService.createOrUpdateUser({
+                    await this.authService.createOrUpdateUser({
                         id: user.sub,
                         name: user.given_name,
                         email: user.email,
@@ -120,4 +129,48 @@ export class GqlJwtAuthGuard extends JwtGuard {
         const ctx = GqlExecutionContext.create(context);
         return ctx.getContext().req;
     }
+}
+
+export interface UserJWT {
+    exp: number;
+    iat: number;
+    auth_time: number;
+    jti: string;
+    iss: string;
+    aud: string;
+    sub: string;
+    typ: string;
+    azp: string;
+    nonce: string;
+    session_state: string;
+    acr: string;
+    realm_access: RealmAccess;
+    resource_access: ResourceAccess;
+    scope: string;
+    sid: string;
+    email_verified: boolean;
+    'https://hasura.io/jwt/claims': HTTPSHasuraIoJwtClaims;
+    preferred_username: string;
+    given_name: string;
+    family_name: string;
+    email: string;
+}
+
+export interface HTTPSHasuraIoJwtClaims {
+    'x-hasura-default-role': string;
+    'x-hasura-user-id': string;
+    'x-hasura-allowed-roles': string[];
+}
+
+export interface RealmAccess {
+    roles: string[];
+}
+
+export interface ResourceAccess {
+    account: Account;
+    hasura: Account;
+}
+
+export interface Account {
+    roles: null[];
 }
