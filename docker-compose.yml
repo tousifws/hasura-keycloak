@@ -80,3 +80,6 @@ services:
             - 8180:8080
         depends_on:
             - postgres
+        # Uncomment following if you want to import realm configuration on start up
+        # volumes:
+        #     - ./realm-export.json:/opt/keycloak/data/import/realm.json:ro
