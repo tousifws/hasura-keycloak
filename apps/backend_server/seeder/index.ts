@@ -10,6 +10,7 @@ const db = new Kysely<DB>({
             connectionString: process.env.DATABASE_URL,
         }),
     }),
+    log: ['query', 'error'],
 });
 
 const userIds = [...Array(10).keys()].map(() => ({
